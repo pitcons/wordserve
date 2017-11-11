@@ -9,12 +9,12 @@ try:
     from flask import _app_ctx_stack as stack
 except ImportError:
     from flask import _request_ctx_stack as stack
-    
-    
-    
+
+
+
 
 class FlaskWord2Vec(object):
-    
+
     _wv = {}
 
     def __init__(self, app=None):
@@ -26,24 +26,24 @@ class FlaskWord2Vec(object):
         app.config.setdefault('WORD2VEC_FILE', 'wordvectors.bin')
         app.config.setdefault('WORD2VEC_FILE_BINARY', True)
 
-            
+
         #import time
-            
+
         #start = time.time()
-        
+
         if app.config['IS_WORD2VEC_NATIVE']:
-            self._wv[app.config['WORD2VEC_FILE']] = Word2Vec.load_word2vec_format(app.config['WORD2VEC_FILE'], 
+            self._wv[app.config['WORD2VEC_FILE']] = Word2Vec.load_word2vec_format(app.config['WORD2VEC_FILE'],
                                 binary=app.config['WORD2VEC_FILE_BINARY'])
         else:
             self._wv[app.config['WORD2VEC_FILE']] = Word2Vec.load(app.config['WORD2VEC_FILE'])
         #end = time.time()
-        
+
        # print(end-start)
-        
+
         #print("init sims")
-        
+
         #self._wv[app.config['WORD2VEC_FILE']].init_sims(replace=True)
-            
+
 
     @property
     def word2vec(self):
@@ -52,5 +52,5 @@ class FlaskWord2Vec(object):
             if not hasattr(ctx, '_wv'):
                 ctx._wv = self._wv[current_app.config['WORD2VEC_FILE']]
             return ctx._wv
-        
+
 w2v = FlaskWord2Vec()
