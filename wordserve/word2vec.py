@@ -1,6 +1,9 @@
 from flask import current_app
 
+import gensim
 from gensim.models.word2vec import Word2Vec
+from gensim.models import KeyedVectors
+
 
 # Find the stack on which we want to store the database connection.
 # Starting with Flask 0.9, the _app_ctx_stack is the correct one,
@@ -25,6 +28,7 @@ class FlaskWord2Vec(object):
     def init_app(self, app):
         app.config.setdefault('WORD2VEC_FILE', 'wordvectors.bin')
         app.config.setdefault('WORD2VEC_FILE_BINARY', True)
+        app.config.setdefault('WORD2VEC_UNICODE_ERRORS', 'ignore')
 
 
         #import time
@@ -32,10 +36,15 @@ class FlaskWord2Vec(object):
         #start = time.time()
 
         if app.config['IS_WORD2VEC_NATIVE']:
-            self._wv[app.config['WORD2VEC_FILE']] = Word2Vec.load_word2vec_format(app.config['WORD2VEC_FILE'],
-                                binary=app.config['WORD2VEC_FILE_BINARY'])
+            self._wv[app.config['WORD2VEC_FILE']] = KeyedVectors.load_word2vec_format(
+                app.config['WORD2VEC_FILE'],
+                binary=app.config['WORD2VEC_FILE_BINARY'],
+                unicode_errors=app.config['WORD2VEC_UNICODE_ERRORS']
+            )
         else:
-            self._wv[app.config['WORD2VEC_FILE']] = Word2Vec.load(app.config['WORD2VEC_FILE'])
+            self._wv[app.config['WORD2VEC_FILE']] = Word2Vec.load(
+                app.config['WORD2VEC_FILE']
+            )
         #end = time.time()
 
        # print(end-start)
